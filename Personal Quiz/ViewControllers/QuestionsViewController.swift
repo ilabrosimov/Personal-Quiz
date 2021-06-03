@@ -32,6 +32,7 @@ class QuestionsViewController: UIViewController {
         super.viewDidLoad()
         
         updateUI()
+        
     }
 }
 

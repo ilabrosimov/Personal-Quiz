@@ -9,16 +9,39 @@
 import UIKit
 
 class ResultViewController: UIViewController {
-    // 1. Массив ответов
-    // 2. Определить наиболее часто встречаемый тип животного
-    // 3. Отобразить результат
-    // 4. Избавиться от кнопки Back
+    @IBOutlet weak var resultLabel: UILabel!
+    @IBOutlet weak var textResultLable: UILabel!
+    var answers: [Answer] = [] //собранные ответы
     
-    var answers: [Answer] = []
-
+  //MARK: - Life Cycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        self.navigationItem.setHidesBackButton(true, animated: true) //спрятали кнопку back
+        guard let resultAnswer = getResultAnimal(answers: answers) else { return}
+        resultLabel.text = "Вы - \(resultAnswer.rawValue)"
+        textResultLable.text = resultAnswer.definition
+    }
+   //MARK: - Private Methods
+    private func getResultAnimal (answers: [Answer]) -> AnimalType? {
+        var answerCounter : [AnimalType:Int] = [.cat:0, .dog:0, .rabbit:0, .turtle:0]
+        for answer in answers {
+            switch answer.type {
+            case .cat:
+                answerCounter[.cat]! += 1
+            case .dog:
+                answerCounter[.dog]! += 1
+            case .rabbit:
+                answerCounter[.rabbit]! += 1
+            case .turtle:
+                answerCounter[.turtle]! += 1
+            }
+        } //сделал подсчет животный по полученным ответам
+        let maxValue = answerCounter.values.max() //нашел максимальное число
+        for (key,_) in answerCounter {
+            if answerCounter[key] == maxValue{
+               return key
+            } // пробежавшись по словарю определил ключ, которому соответствует макс значение
+        }
+        return nil
     }
 }
