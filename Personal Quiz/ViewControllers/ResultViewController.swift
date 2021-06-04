@@ -18,30 +18,22 @@ class ResultViewController: UIViewController {
         super.viewDidLoad()
         self.navigationItem.setHidesBackButton(true, animated: true) //спрятали кнопку back
         guard let resultAnswer = getResultAnimal(answers: answers) else { return}
-        resultLabel.text = "Вы - \(resultAnswer.rawValue)"
-        textResultLable.text = resultAnswer.definition
+        updateUI(resultAnswer: resultAnswer)
     }
    //MARK: - Private Methods
     private func getResultAnimal (answers: [Answer]) -> AnimalType? {
-        var answerCounter : [AnimalType:Int] = [.cat:0, .dog:0, .rabbit:0, .turtle:0]
-        for answer in answers {
-            switch answer.type {
-            case .cat:
-                answerCounter[.cat]! += 1
-            case .dog:
-                answerCounter[.dog]! += 1
-            case .rabbit:
-                answerCounter[.rabbit]! += 1
-            case .turtle:
-                answerCounter[.turtle]! += 1
+        var answerCounter : [AnimalType:Int] = [:]
+        let animals = answers.map {$0.type}
+        
+        for animal in animals {
+            if let animalValue = answerCounter[animal] {
+                answerCounter.updateValue(animalValue + 1, forKey: animal) } else { answerCounter[animal] = 1}
             }
-        } //сделал подсчет животный по полученным ответам
-        let maxValue = answerCounter.values.max() //нашел максимальное число
-        for (key,_) in answerCounter {
-            if answerCounter[key] == maxValue{
-               return key
-            } // пробежавшись по словарю определил ключ, которому соответствует макс значение
-        }
-        return nil
+        return answerCounter.sorted {$0.value > $1.value}.first?.key ?? nil
+       
+    }
+    func updateUI (resultAnswer: AnimalType) {
+        resultLabel.text = "Вы - \(resultAnswer.rawValue)"
+        textResultLable.text = resultAnswer.definition
     }
 }
